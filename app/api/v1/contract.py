@@ -1,0 +1,282 @@
+import uuid
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, File, Form, Header, UploadFile
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.api.deps import get_yuanqi_client, require_service_auth, resolve_user_id
+from app.core.config import Settings, get_settings
+from app.core.exceptions import AppError
+from app.db.models.chat_session import ChatSession
+from app.db.models.contract import Contract
+from app.db.models.uploaded_file import UploadedFile
+from app.db.session import get_db
+from app.schemas.common import (
+    ChatCompletionResponse,
+    ContractGenerateRequest,
+    ContractReviewResultResponse,
+)
+from app.services.conversation import build_user_message
+from app.services.users import get_or_create_user
+from app.services.yuanqi_client import YuanqiClient, extract_assistant_text
+
+router = APIRouter(prefix="/contracts", tags=["contracts"])
+
+MAX_INLINE_TEXT_CHARS = 200_000
+REVIEW_FAILED_PREFIX = "REVIEW_FAILED:\n"
+
+
+def _review_status(contract: Contract) -> str:
+    if contract.scene != "review":
+        return "unknown"
+    if contract.review_result is None:
+        return "pending"
+    if contract.review_result.startswith(REVIEW_FAILED_PREFIX):
+        return "failed"
+    return "done"
+
+
+def _file_type_from_name(name: str | None) -> str:
+    if not name:
+        return "pdf"
+    lower = name.lower()
+    if lower.endswith(".docx"):
+        return "docx"
+    return "pdf"
+
+
+async def _ensure_session_owned(
+    session: AsyncSession,
+    user_uuid: str,
+    session_id: str | None,
+) -> None:
+    if not session_id:
+        return
+    r = await session.execute(
+        select(ChatSession).where(
+            ChatSession.id == session_id,
+            ChatSession.user_id == user_uuid,
+        )
+    )
+    if r.scalar_one_or_none() is None:
+        raise AppError("invalid_session", "会话不存在或无权访问", status_code=403)
+
+
+@router.post(
+    "/review",
+    dependencies=[Depends(require_service_auth)],
+)
+async def contract_review(
+    session: Annotated[AsyncSession, Depends(get_db)],
+    settings: Annotated[Settings, Depends(get_settings)],
+    client: Annotated[YuanqiClient, Depends(get_yuanqi_client)],
+    authorization: Annotated[str | None, Header()] = None,
+    file: UploadFile = File(...),
+    notes: str | None = Form(None),
+    user_id_body: str | None = Form(None, alias="user_id"),
+    session_id: str | None = Form(None),
+) -> ContractReviewResultResponse:
+    uid = resolve_user_id(settings, authorization, user_id_body)
+    user = await get_or_create_user(session, uid, settings)
+    await _ensure_session_owned(session, user.id, session_id)
+
+    raw = await _read_limited_upload(file, settings.max_upload_bytes)
+    contract_text = raw.decode("utf-8", errors="replace")
+    if len(contract_text) > MAX_INLINE_TEXT_CHARS:
+        contract_text = contract_text[:MAX_INLINE_TEXT_CHARS] + "\n\n[文本已截断]"
+
+    assistant_id = settings.assistant_id_for("contract_review")
+    cid = str(uuid.uuid4())
+    title = file.filename or "合同审查"
+    ft = _file_type_from_name(file.filename)
+
+    contract = Contract(
+        id=cid,
+        user_id=user.id,
+        session_id=session_id,
+        title=title,
+        contract_type=None,
+        scene="review",
+        review_role="neutral",
+    )
+    session.add(contract)
+    ufile = UploadedFile(
+        id=str(uuid.uuid4()),
+        user_id=user.id,
+        contract_id=cid,
+        file_name=file.filename or "upload",
+        file_size=len(raw),
+        file_type=ft,
+        storage_url=None,
+    )
+    session.add(ufile)
+    await session.flush()
+    await session.commit()
+
+    prompt_parts = [
+        "你是一名法律顾问，请对下列合同文本进行风险审查，列出风险点、建议修改方向及依据（如有）。",
+    ]
+    if notes:
+        prompt_parts.append(f"用户补充说明：{notes}")
+    prompt_parts.append("--- 合同文本 ---")
+    prompt_parts.append(contract_text)
+    prompt = "\n".join(prompt_parts)
+    messages = build_user_message(prompt)
+
+    try:
+        data = await client.chat_completions(
+            assistant_id=assistant_id,
+            user_id=uid,
+            messages=messages,
+            stream=False,
+            custom_variables=None,
+        )
+        text = extract_assistant_text(data)
+        contract.review_result = text
+    except AppError as e:
+        contract.review_result = f"{REVIEW_FAILED_PREFIX}{e.message}"
+        await session.commit()
+        raise
+    except Exception as e:
+        contract.review_result = f"{REVIEW_FAILED_PREFIX}{str(e)[:2000]}"
+        await session.commit()
+        raise AppError(
+            "review_failed",
+            "合同审查调用失败",
+            status_code=502,
+            detail=str(e)[:500],
+        ) from e
+
+    await session.commit()
+    st = _review_status(contract)
+    err = None
+    res = contract.review_result
+    if st == "failed" and res:
+        err = res.removeprefix(REVIEW_FAILED_PREFIX).strip()
+        res = None
+    return ContractReviewResultResponse(
+        contract_id=cid,
+        status=st,
+        result=res,
+        error=err,
+    )
+
+
+@router.get(
+    "/review/{contract_id}",
+    dependencies=[Depends(require_service_auth)],
+)
+async def get_contract_review(
+    contract_id: str,
+    session: Annotated[AsyncSession, Depends(get_db)],
+    settings: Annotated[Settings, Depends(get_settings)],
+    authorization: Annotated[str | None, Header()] = None,
+) -> ContractReviewResultResponse:
+    uid = resolve_user_id(settings, authorization, None)
+    user = await get_or_create_user(session, uid, settings)
+    result = await session.execute(
+        select(Contract).where(
+            Contract.id == contract_id,
+            Contract.user_id == user.id,
+            Contract.scene == "review",
+        )
+    )
+    contract = result.scalar_one_or_none()
+    if not contract:
+        raise AppError("not_found", "合同审查记录不存在", status_code=404)
+    st = _review_status(contract)
+    err = None
+    res = contract.review_result
+    if st == "failed" and res:
+        err = res.removeprefix(REVIEW_FAILED_PREFIX).strip()
+        res = None
+    elif st == "pending":
+        res = None
+    return ContractReviewResultResponse(
+        contract_id=contract.id,
+        status=st,
+        result=res,
+        error=err,
+    )
+
+
+@router.post(
+    "/generate",
+    dependencies=[Depends(require_service_auth)],
+)
+async def contract_generate(
+    body: ContractGenerateRequest,
+    session: Annotated[AsyncSession, Depends(get_db)],
+    settings: Annotated[Settings, Depends(get_settings)],
+    client: Annotated[YuanqiClient, Depends(get_yuanqi_client)],
+    authorization: Annotated[str | None, Header()] = None,
+) -> ChatCompletionResponse:
+    user_id = resolve_user_id(settings, authorization, body.user_id)
+    user = await get_or_create_user(session, user_id, settings)
+    await _ensure_session_owned(session, user.id, body.session_id)
+
+    assistant_id = settings.assistant_id_for("contract_generate")
+    lines = [
+        "请根据以下信息起草合同正文，条款应完整、可执行，并说明必要时的留白项。",
+        f"合同类型：{body.contract_type}",
+    ]
+    if body.parties:
+        lines.append(f"当事方：{body.parties}")
+    if body.subject_matter:
+        lines.append(f"标的/合作内容：{body.subject_matter}")
+    if body.extra_requirements:
+        lines.append(f"其他要求：{body.extra_requirements}")
+    prompt = "\n".join(lines)
+    messages = build_user_message(prompt)
+
+    data = await client.chat_completions(
+        assistant_id=assistant_id,
+        user_id=user_id,
+        messages=messages,
+        stream=False,
+        custom_variables=body.custom_variables,
+    )
+    text = extract_assistant_text(data)
+    cid = str(uuid.uuid4())
+    contract = Contract(
+        id=cid,
+        user_id=user.id,
+        session_id=body.session_id,
+        title=f"{body.contract_type}",
+        contract_type=body.contract_type,
+        scene="generate",
+        content=text,
+    )
+    session.add(contract)
+    await session.commit()
+
+    return ChatCompletionResponse(
+        id=data.get("id"),
+        created=str(data.get("created")) if data.get("created") is not None else None,
+        assistant_id=data.get("assistant_id"),
+        content=text,
+        raw=data if settings.debug else None,
+        contract_id=cid,
+    )
+
+
+async def _read_limited_upload(file: UploadFile, max_bytes: int) -> bytes:
+    chunks: list[bytes] = []
+    total = 0
+    while True:
+        block = await file.read(64 * 1024)
+        if not block:
+            break
+        total += len(block)
+        if total > max_bytes:
+            raise AppError(
+                "payload_too_large",
+                f"上传文件超过限制（{max_bytes} 字节）",
+                status_code=413,
+            )
+        chunks.append(block)
+    data = b"".join(chunks)
+    if not data:
+        raise AppError("empty_file", "上传文件为空", status_code=400)
+    return data

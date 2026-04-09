@@ -57,3 +57,32 @@ async def test_chat_completions_stream(client: AsyncClient) -> None:
     assert r.headers.get("content-type", "").startswith("text/event-stream")
     text = r.text
     assert "delta" in text
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_agent_chat_completions_non_stream(client: AsyncClient) -> None:
+    settings = get_settings()
+    respx.post(settings.yuanqi_base_url).mock(
+        return_value=Response(
+            200,
+            json={
+                "id": "rid",
+                "created": "123",
+                "assistant_id": "aid",
+                "choices": [
+                    {"message": {"role": "assistant", "content": "统一入口回复"}}
+                ],
+            },
+        )
+    )
+    r = await client.post(
+        "/api/v1/agent/chat/completions",
+        json={
+            "messages": [{"role": "user", "content": "你好"}],
+            "stream": False,
+        },
+    )
+    assert r.status_code == 200
+    body = r.json()
+    assert body["content"] == "统一入口回复"

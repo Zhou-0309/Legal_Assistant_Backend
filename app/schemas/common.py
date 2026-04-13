@@ -36,6 +36,31 @@ class ChatCompletionResponse(BaseModel):
     contract_id: str | None = Field(None, description="合同生成落库后的 contracts.id")
 
 
+class AuthSendCodeRequest(BaseModel):
+    phone: str = Field(..., min_length=6, max_length=20)
+
+
+class AuthSendCodeResponse(BaseModel):
+    message: str
+    code: str | None = None
+
+
+class AuthLoginRequest(BaseModel):
+    phone: str = Field(..., min_length=6, max_length=20)
+    code: str = Field(..., min_length=4, max_length=10)
+    nickname: str | None = None
+
+
+class AuthTokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user_id: str
+
+
+class AuthLogoutResponse(BaseModel):
+    message: str
+
+
 class ClauseSearchRequest(BaseModel):
     query: str = Field(..., min_length=1, max_length=8000)
     filters: str | None = Field(None, description="可选检索范围/标签，如与元器 custom_variables 对齐")

@@ -90,6 +90,45 @@ async def test_agent_chat_completions_non_stream(client: AsyncClient) -> None:
 
 @pytest.mark.asyncio
 @respx.mock
+async def test_contract_review_dialog_uses_dedicated_contract_review_agent(
+    client: AsyncClient,
+) -> None:
+    settings = get_settings()
+    settings.yuanqi_contract_review_base_url = (
+        "https://yuanqi.tencent.com/openapi/v1/agent/chat/completions"
+    )
+    settings.yuanqi_contract_review_api_key = "test-contract-review-key"
+    settings.yuanqi_assistant_contract_review = "test-contract-review-assistant"
+
+    respx.post(settings.yuanqi_contract_review_base_url).mock(
+        return_value=Response(
+            200,
+            json={
+                "id": "rid",
+                "created": "123",
+                "assistant_id": "aid",
+                "choices": [
+                    {"message": {"role": "assistant", "content": "合同审查结果"}}
+                ],
+            },
+        )
+    )
+
+    r = await client.post(
+        "/api/v1/contracts/review/dialog",
+        json={
+            "messages": [{"role": "user", "content": "请审查这份合同"}],
+            "stream": False,
+        },
+    )
+    assert r.status_code == 200
+    body = r.json()
+    assert body["content"] == "合同审查结果"
+    assert body["assistant_id"] == "aid"
+
+
+@pytest.mark.asyncio
+@respx.mock
 async def test_clause_search_with_hunyuan_client(client: AsyncClient) -> None:
     settings = get_settings()
     settings.hunyuan_api_key = "test-hunyuan-key"

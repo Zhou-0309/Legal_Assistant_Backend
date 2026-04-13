@@ -19,8 +19,37 @@ def get_yuanqi_client(request: Request) -> YuanqiClient:
 async def require_service_auth(
     settings: Annotated[Settings, Depends(get_settings)],
     x_api_key: Annotated[str | None, Header(alias="X-API-Key")] = None,
+    authorization: Annotated[str | None, Header()] = None,
 ) -> None:
-    # 当前不启用鉴权，直接允许所有请求。
+    if settings.api_key and x_api_key == settings.api_key:
+        return
+
+    if settings.jwt_secret and authorization and authorization.startswith("Bearer "):
+        token = authorization.removeprefix("Bearer ").strip()
+        if token:
+            try:
+                from jose import JWTError, jwt
+
+                jwt.decode(
+                    token,
+                    settings.jwt_secret,
+                    algorithms=[settings.jwt_algorithm],
+                )
+                return
+            except JWTError:
+                raise AppError(
+                    "invalid_token",
+                    "JWT 无效或已过期",
+                    status_code=401,
+                ) from None
+
+    if settings.api_key or settings.jwt_secret:
+        raise AppError(
+            "unauthorized",
+            "无效的认证信息",
+            status_code=401,
+        )
+
     return
 
 

@@ -4,7 +4,8 @@ import os
 os.environ["YUANQI_API_KEY"] = "test-yuanqi-key"
 os.environ["YUANQI_ASSISTANT_ID"] = "test-assistant-id"
 os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"
-os.environ.pop("API_KEY", None)
+os.environ["API_KEY"] = ""
+os.environ["JWT_SECRET"] = ""
 
 from app.core.config import get_settings
 

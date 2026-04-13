@@ -19,6 +19,8 @@ class Settings(BaseSettings):
 
     yuanqi_base_url: str = "https://yuanqi.tencent.com/openapi/v1/agent/chat/completions"
     yuanqi_api_key: str = ""
+    yuanqi_contract_review_base_url: str = "https://yuanqi.tencent.com/openapi/v1/agent/chat/completions"
+    yuanqi_contract_review_api_key: str = ""
     yuanqi_assistant_id: str = ""
     yuanqi_assistant_chat: str = ""
     yuanqi_assistant_contract_review: str = ""
@@ -57,6 +59,16 @@ class Settings(BaseSettings):
         }
         specific = mapping.get(scene, "")
         return specific or self.yuanqi_assistant_id
+
+    def yuanqi_base_url_for(self, scene: str) -> str:
+        if scene == "contract_review":
+            return self.yuanqi_contract_review_base_url or self.yuanqi_base_url
+        return self.yuanqi_base_url
+
+    def yuanqi_api_key_for(self, scene: str) -> str | None:
+        if scene == "contract_review":
+            return self.yuanqi_contract_review_api_key or self.yuanqi_api_key
+        return self.yuanqi_api_key
 
     def hunyuan_assistant_id_for(self, scene: str) -> str:
         mapping = {

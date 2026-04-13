@@ -2,6 +2,7 @@ import uuid
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, File, Form, Header, UploadFile
+from fastapi.responses import StreamingResponse
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,11 +14,12 @@ from app.db.models.contract import Contract
 from app.db.models.uploaded_file import UploadedFile
 from app.db.session import get_db
 from app.schemas.common import (
+    ChatCompletionRequest,
     ChatCompletionResponse,
     ContractGenerateRequest,
     ContractReviewResultResponse,
 )
-from app.services.conversation import build_user_message
+from app.services.conversation import build_user_message, to_yuanqi_messages
 from app.services.users import get_or_create_user
 from app.services.yuanqi_client import YuanqiClient, extract_assistant_text
 
@@ -61,6 +63,70 @@ async def _ensure_session_owned(
     )
     if r.scalar_one_or_none() is None:
         raise AppError("invalid_session", "会话不存在或无权访问", status_code=403)
+
+
+@router.post(
+    "/review/dialog",
+    dependencies=[Depends(require_service_auth)],
+    response_model=None,
+)
+async def contract_review_dialog(
+    body: ChatCompletionRequest,
+    settings: Annotated[Settings, Depends(get_settings)],
+    client: Annotated[YuanqiClient, Depends(get_yuanqi_client)],
+    authorization: Annotated[str | None, Header()] = None,
+) -> ChatCompletionResponse | StreamingResponse:
+    user_id = resolve_user_id(settings, authorization, body.user_id)
+    assistant_id = settings.assistant_id_for("contract_review")
+    try:
+        yuanqi_messages = to_yuanqi_messages(body.messages)
+    except ValueError as e:
+        raise AppError("invalid_messages", str(e), status_code=400) from e
+
+    base_url = settings.yuanqi_base_url_for("contract_review")
+    api_key = settings.yuanqi_api_key_for("contract_review")
+
+    if body.stream:
+
+        async def stream_gen() -> bytes:
+            resp = await client.chat_completions_stream(
+                assistant_id=assistant_id,
+                user_id=user_id,
+                messages=yuanqi_messages,
+                custom_variables=body.custom_variables,
+                base_url=base_url,
+                api_key=api_key,
+            )
+            async for chunk in YuanqiClient.iter_stream_bytes(resp):
+                yield chunk
+
+        return StreamingResponse(
+            stream_gen(),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                "X-Accel-Buffering": "no",
+            },
+        )
+
+    data = await client.chat_completions(
+        assistant_id=assistant_id,
+        user_id=user_id,
+        messages=yuanqi_messages,
+        stream=False,
+        custom_variables=body.custom_variables,
+        base_url=base_url,
+        api_key=api_key,
+    )
+    text = extract_assistant_text(data)
+    return ChatCompletionResponse(
+        id=data.get("id"),
+        created=str(data.get("created")) if data.get("created") is not None else None,
+        assistant_id=data.get("assistant_id"),
+        content=text,
+        raw=data if settings.debug else None,
+    )
 
 
 @router.post(

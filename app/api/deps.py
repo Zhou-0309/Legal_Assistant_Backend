@@ -20,14 +20,8 @@ async def require_service_auth(
     settings: Annotated[Settings, Depends(get_settings)],
     x_api_key: Annotated[str | None, Header(alias="X-API-Key")] = None,
 ) -> None:
-    if not settings.api_key:
-        return
-    if not x_api_key or x_api_key != settings.api_key:
-        raise AppError(
-            "unauthorized",
-            "无效的 API Key",
-            status_code=401,
-        )
+    # 当前不启用鉴权，直接允许所有请求。
+    return
 
 
 def resolve_user_id(

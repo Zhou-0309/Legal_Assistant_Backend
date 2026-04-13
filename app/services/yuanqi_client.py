@@ -21,15 +21,16 @@ class YuanqiClient:
     async def aclose(self) -> None:
         await self._client.aclose()
 
-    def _headers(self) -> dict[str, str]:
-        if not self._settings.yuanqi_api_key:
+    def _headers(self, api_key: str | None = None) -> dict[str, str]:
+        key = api_key or self._settings.yuanqi_api_key
+        if not key:
             raise AppError(
                 "yuanqi_not_configured",
-                "未配置腾讯元器 API Key（YUANQI_API_KEY）",
+                "未配置腾讯元器 API Key（YUANQI_API_KEY 或 HUNYUAN_API_KEY）",
                 status_code=503,
             )
         return {
-            "Authorization": f"Bearer {self._settings.yuanqi_api_key}",
+            "Authorization": f"Bearer {key}",
             "Content-Type": "application/json",
             "X-Source": "openapi",
         }
@@ -42,6 +43,8 @@ class YuanqiClient:
         messages: list[dict[str, Any]],
         stream: bool = False,
         custom_variables: dict[str, str] | None = None,
+        base_url: str | None = None,
+        api_key: str | None = None,
     ) -> dict[str, Any]:
         if not assistant_id:
             raise AppError(
@@ -58,9 +61,10 @@ class YuanqiClient:
         if custom_variables:
             payload["custom_variables"] = custom_variables
 
+        url = base_url or self._settings.yuanqi_base_url
         resp = await self._client.post(
-            self._settings.yuanqi_base_url,
-            headers=self._headers(),
+            url,
+            headers=self._headers(api_key=api_key),
             json=payload,
         )
         return self._parse_json_response(resp)
@@ -72,6 +76,8 @@ class YuanqiClient:
         user_id: str,
         messages: list[dict[str, Any]],
         custom_variables: dict[str, str] | None = None,
+        base_url: str | None = None,
+        api_key: str | None = None,
     ) -> httpx.Response:
         if not assistant_id:
             raise AppError(
@@ -88,10 +94,11 @@ class YuanqiClient:
         if custom_variables:
             payload["custom_variables"] = custom_variables
 
+        url = base_url or self._settings.yuanqi_base_url
         req = self._client.build_request(
             "POST",
-            self._settings.yuanqi_base_url,
-            headers=self._headers(),
+            url,
+            headers=self._headers(api_key=api_key),
             json=payload,
         )
         resp = await self._client.send(req, stream=True)

@@ -22,7 +22,15 @@ async def clause_search(
     authorization: Annotated[str | None, Header()] = None,
 ) -> ChatCompletionResponse:
     user_id = resolve_user_id(settings, authorization, body.user_id)
-    assistant_id = settings.assistant_id_for("clause_search")
+    if settings.hunyuan_api_key:
+        assistant_id = settings.hunyuan_assistant_id_for("clause_search")
+        base_url = settings.hunyuan_base_url
+        api_key = settings.hunyuan_api_key
+    else:
+        assistant_id = settings.assistant_id_for("clause_search")
+        base_url = None
+        api_key = None
+
     prompt = (
         "请根据用户问题进行法律条款检索与说明，尽量引用可核对来源；用户问题：\n"
         f"{body.query}"
@@ -37,6 +45,8 @@ async def clause_search(
         messages=messages,
         stream=False,
         custom_variables=custom,
+        base_url=base_url,
+        api_key=api_key,
     )
     text = extract_assistant_text(data)
     return ChatCompletionResponse(

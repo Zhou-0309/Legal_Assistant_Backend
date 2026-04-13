@@ -24,6 +24,12 @@ class Settings(BaseSettings):
     yuanqi_assistant_contract_review: str = ""
     yuanqi_assistant_clause_search: str = ""
     yuanqi_assistant_contract_generate: str = ""
+
+    hunyuan_base_url: str = "https://open.hunyuan.tencent.com/openapi/v1/agent/chat/completions"
+    hunyuan_api_key: str = ""
+    hunyuan_assistant_id: str = ""
+    hunyuan_assistant_clause_search: str = ""
+
     yuanqi_timeout_seconds: float = 120.0
     yuanqi_http2: bool = False
 
@@ -51,6 +57,13 @@ class Settings(BaseSettings):
         }
         specific = mapping.get(scene, "")
         return specific or self.yuanqi_assistant_id
+
+    def hunyuan_assistant_id_for(self, scene: str) -> str:
+        mapping = {
+            "clause_search": self.hunyuan_assistant_clause_search,
+        }
+        specific = mapping.get(scene, "")
+        return specific or self.hunyuan_assistant_id
 
     @field_validator("log_level", mode="before")
     @classmethod

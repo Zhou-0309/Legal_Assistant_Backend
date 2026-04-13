@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.v1 import agent, chat, contract, health, legal_search
+from app.api.v1 import agent, chat, contract,contract_download, health, legal_search
 
 api_router = APIRouter(prefix="/api/v1")
 
@@ -9,3 +9,4 @@ api_router.include_router(agent.router)
 api_router.include_router(chat.router)
 api_router.include_router(legal_search.router)
 api_router.include_router(contract.router)
+api_router.include_router(contract_download.router)

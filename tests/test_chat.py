@@ -86,3 +86,32 @@ async def test_agent_chat_completions_non_stream(client: AsyncClient) -> None:
     assert r.status_code == 200
     body = r.json()
     assert body["content"] == "统一入口回复"
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_clause_search_with_hunyuan_client(client: AsyncClient) -> None:
+    settings = get_settings()
+    settings.hunyuan_api_key = "test-hunyuan-key"
+    settings.hunyuan_assistant_id = "test-assistant-id"
+    respx.post(settings.hunyuan_base_url).mock(
+        return_value=Response(
+            200,
+            json={
+                "id": "rid",
+                "created": "123",
+                "assistant_id": "aid",
+                "choices": [
+                    {"message": {"role": "assistant", "content": "法条检索结果"}}
+                ],
+            },
+        )
+    )
+
+    r = await client.post(
+        "/api/v1/legal/clauses/search",
+        json={"query": "劳动法第几条", "filters": "行政法"},
+    )
+    assert r.status_code == 200
+    body = r.json()
+    assert body["content"] == "法条检索结果"

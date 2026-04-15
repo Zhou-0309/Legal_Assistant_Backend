@@ -1,4 +1,5 @@
-from typing import Any
+from datetime import datetime
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -25,6 +26,51 @@ class ChatCompletionRequest(BaseModel):
     stream: bool = False
     user_id: str | None = None
     custom_variables: dict[str, str] | None = None
+    session_id: str | None = Field(
+        None,
+        description="若填写则读取该会话历史、合并后调用元器，并在成功后落库；messages 须仅含本轮 user 消息",
+    )
+
+
+ChatSessionToolType = Literal["chat", "law", "case", "contract", "review"]
+
+
+class ChatSessionCreate(BaseModel):
+    title: str | None = Field(None, max_length=128, description="默认「新对话」，也可首条对话后自动截取")
+    tool_type: ChatSessionToolType = "chat"
+
+
+class ChatSessionPatch(BaseModel):
+    title: str | None = Field(None, max_length=128)
+    tool_type: ChatSessionToolType | None = None
+
+
+class ChatSessionItem(BaseModel):
+    id: str
+    user_id: str
+    title: str
+    tool_type: str
+    created_at: datetime
+    message_count: int = 0
+
+
+class PaginatedChatSessions(BaseModel):
+    total: int
+    items: list[ChatSessionItem]
+
+
+class ChatMessageItem(BaseModel):
+    id: str
+    session_id: str
+    role: str
+    content: str
+    tool_badge: str | None = None
+    created_at: datetime
+
+
+class PaginatedChatMessages(BaseModel):
+    total: int
+    items: list[ChatMessageItem]
 
 
 class ChatCompletionResponse(BaseModel):

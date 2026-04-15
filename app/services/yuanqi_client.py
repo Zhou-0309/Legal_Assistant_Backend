@@ -62,6 +62,11 @@ class YuanqiClient:
             payload["custom_variables"] = custom_variables
 
         url = base_url or self._settings.yuanqi_base_url
+        print(f"=== REQUEST DEBUG ===")
+        print(f"URL: {url}")
+        print(f"Headers: {self._headers(api_key=api_key)}")
+        print(f"Payload: {payload}")
+        print(f"===================")
         resp = await self._client.post(
             url,
             headers=self._headers(api_key=api_key),

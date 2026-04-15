@@ -1,14 +1,15 @@
 from contextlib import asynccontextmanager
+import os
 
 from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 
 from app.api.v1.router import api_router
 from app.core.config import get_settings
 from app.core.exceptions import AppError, app_error_handler
 from app.core.logging import get_logger, new_request_id, request_id_ctx, setup_logging
-from app.db import models  # noqa: F401 — 注册 ORM 映射
+from app.db import models
 from app.services.yuanqi_client import YuanqiClient
 
 logger = get_logger(__name__)
@@ -32,6 +33,7 @@ def create_app() -> FastAPI:
         title=settings.app_name,
         lifespan=lifespan,
         debug=settings.debug,
+        swagger_ui_parameters={"persistAuthorization": True},
     )
 
     app.add_middleware(
@@ -55,9 +57,24 @@ def create_app() -> FastAPI:
 
     app.add_exception_handler(AppError, app_error_handler)
 
-    @app.get("/")
-    async def root() -> dict[str, str]:
-        return {"service": settings.app_name, "docs": "/docs"}
+    # 托管前端静态文件（必须在根路由之前）
+    frontend_path = "/home/ubuntu/Legal_Assistant/frontend"
+    if os.path.exists(frontend_path):
+        app.mount("/static", StaticFiles(directory=frontend_path), name="static")
+        logger.info(f"静态文件托管: {frontend_path}")
+        
+        # 手动处理根路由返回 index.html
+        @app.get("/")
+        async def root():
+            from fastapi.responses import FileResponse
+            index_path = os.path.join(frontend_path, "index.html")
+            if os.path.exists(index_path):
+                return FileResponse(index_path)
+            return {"service": settings.app_name, "docs": "/docs"}
+    else:
+        @app.get("/")
+        async def root() -> dict[str, str]:
+            return {"service": settings.app_name, "docs": "/docs"}
 
     app.include_router(api_router)
     return app

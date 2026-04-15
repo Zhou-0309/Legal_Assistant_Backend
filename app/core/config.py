@@ -27,6 +27,8 @@ class Settings(BaseSettings):
     yuanqi_assistant_clause_search: str = ""
     yuanqi_assistant_contract_generate: str = ""
 
+    yuanqi_contract_generate_api_key: str= ""
+
     hunyuan_base_url: str = "https://open.hunyuan.tencent.com/openapi/v1/agent/chat/completions"
     hunyuan_api_key: str = ""
     hunyuan_assistant_id: str = ""
@@ -68,6 +70,8 @@ class Settings(BaseSettings):
     def yuanqi_api_key_for(self, scene: str) -> str | None:
         if scene == "contract_review":
             return self.yuanqi_contract_review_api_key or self.yuanqi_api_key
+        if scene == "contract_generate":
+            return self.yuanqi_contract_generate_api_key or self.yuanqi_api_key
         return self.yuanqi_api_key
 
     def hunyuan_assistant_id_for(self, scene: str) -> str:

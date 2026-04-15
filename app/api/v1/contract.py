@@ -295,13 +295,20 @@ async def contract_generate(
         lines.append(f"其他要求：{body.extra_requirements}")
     prompt = "\n".join(lines)
     messages = build_user_message(prompt)
-
+   # 插入调试代码
+    print(f"=== DEBUG contract_generate ===")
+    print(f"assistant_id: {assistant_id}")
+    print(f"user_id: {user_id}")
+    print(f"api_key: {settings.yuanqi_api_key_for('contract_generate')}")  # 新增
+    print(f"messages: {messages}")
+    print(f"=== 调试结束 ===")
     data = await client.chat_completions(
         assistant_id=assistant_id,
         user_id=user_id,
         messages=messages,
         stream=False,
         custom_variables=body.custom_variables,
+        api_key=settings.yuanqi_api_key_for("contract_generate"), 
     )
     text = extract_assistant_text(data)
     cid = str(uuid.uuid4())

@@ -1,0 +1,329 @@
+nohup: ignoring input
+2026-04-18T14:02:34 INFO [app.main] request_id=- 静态文件托管: /home/ubuntu/Frontend
+INFO:     Started server process [2744]
+INFO:     Waiting for application startup.
+2026-04-18T14:02:34 INFO [app.main] request_id=- 应用启动
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:49388 - "GET /login.html HTTP/1.1" 200 OK
+INFO:     223.104.68.130:64148 - "GET /index.html HTTP/1.1" 200 OK
+INFO:     223.104.68.130:64149 - "GET /js/main.js HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:64148 - "GET /css/style.css HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:64148 - "GET / HTTP/1.1" 200 OK
+验证码发送到 15219307360: 986041
+INFO:     223.104.68.130:36101 - "POST /api/v1/auth/send-code HTTP/1.1" 200 OK
+INFO:     223.104.68.130:36102 - "POST /api/v1/auth/login HTTP/1.1" 200 OK
+INFO:     223.104.68.130:43179 - "GET /index.html HTTP/1.1" 200 OK
+INFO:     223.104.68.130:29938 - "GET /css/style.css HTTP/1.1" 200 OK
+INFO:     223.104.68.130:43179 - "GET /js/main.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:29938 - "GET /index.html HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:29938 - "GET /css/style.css HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:43179 - "GET /js/main.js HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:49440 - "GET /css/style.css HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:49440 - "GET /index.html HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:49440 - "GET /js/main.js HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:24512 - "GET /index.html HTTP/1.1" 200 OK
+INFO:     223.104.68.130:24511 - "GET /js/main.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:24512 - "GET /css/style.css HTTP/1.1" 200 OK
+INFO:     223.104.68.130:24511 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+验证码发送到 15219307360: 472012
+INFO:     223.104.68.130:42068 - "POST /api/v1/auth/send-code HTTP/1.1" 200 OK
+INFO:     220.196.160.146:34050 - "GET /index.html HTTP/1.1" 200 OK
+INFO:     223.104.68.130:45903 - "POST /api/v1/auth/login HTTP/1.1" 200 OK
+INFO:     223.104.68.130:45903 - "GET /index.html HTTP/1.1" 304 Not Modified
+验证码发送到 15219307360: 355419
+INFO:     223.104.68.130:46183 - "POST /api/v1/auth/send-code HTTP/1.1" 200 OK
+INFO:     223.104.68.130:49534 - "POST /api/v1/auth/login HTTP/1.1" 200 OK
+INFO:     223.104.68.130:49534 - "GET /index.html HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:49534 - "GET /css/style.css HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:55100 - "GET /js/main.js HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:33341 - "GET /index.html HTTP/1.1" 200 OK
+INFO:     223.104.68.130:33340 - "GET /js/main.js HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:33341 - "GET /css/style.css HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:42930 - "GET /index.html HTTP/1.1" 200 OK
+INFO:     223.104.68.130:42930 - "GET /css/style.css HTTP/1.1" 200 OK
+INFO:     223.104.68.130:28846 - "GET /js/main.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:28846 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     223.104.68.130:28846 - "GET /index.html HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:28846 - "GET /js/main.js HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:46789 - "GET /css/style.css HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:64383 - "GET /index.html HTTP/1.1" 200 OK
+INFO:     223.104.68.130:16554 - "GET /js/utils.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:64383 - "GET /css/style.css HTTP/1.1" 200 OK
+INFO:     223.104.68.130:64536 - "GET /js/chat.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:16714 - "GET /js/tools.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:64537 - "GET /js/main.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:64537 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     223.104.68.130:62268 - "GET /css/style.css HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:22755 - "GET /index.html HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:22755 - "GET /js/utils.js HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:38202 - "GET /js/chat.js HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:38286 - "GET /js/tools.js HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:38287 - "GET /js/main.js HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:50489 - "GET /index.html HTTP/1.1" 200 OK
+INFO:     223.104.68.130:50489 - "GET /css/style.css HTTP/1.1" 200 OK
+INFO:     223.104.68.130:35638 - "GET /js/utils.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:35753 - "GET /js/main.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:35752 - "GET /js/tools.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:50599 - "GET /js/chat.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:35752 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     223.104.68.130:41400 - "GET /index.html HTTP/1.1" 200 OK
+INFO:     223.104.68.130:41401 - "GET /config.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:41400 - "GET /css/style.css HTTP/1.1" 200 OK
+INFO:     223.104.68.130:41490 - "GET /js/utils.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:41491 - "GET /js/main.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:27107 - "GET /js/tools.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:27109 - "GET /js/chat.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:41491 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     223.104.68.130:31922 - "GET /index.html HTTP/1.1" 200 OK
+INFO:     223.104.68.130:31922 - "GET /css/style.css HTTP/1.1" 200 OK
+INFO:     223.104.68.130:31921 - "GET /config.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:46380 - "GET /js/main.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:31988 - "GET /js/utils.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:31989 - "GET /js/chat.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:31987 - "GET /js/tools.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:31987 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     223.104.68.130:8249 - "GET /index.html HTTP/1.1" 200 OK
+INFO:     223.104.68.130:55003 - "GET /config.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:8249 - "GET /css/style.css HTTP/1.1" 200 OK
+INFO:     223.104.68.130:55120 - "GET /js/tools.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:55003 - "GET /js/main.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:8356 - "GET /js/chat.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:55121 - "GET /js/utils.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:55121 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     223.104.68.130:55121 - "GET /index.html HTTP/1.1" 200 OK
+INFO:     223.104.68.130:55120 - "GET /config.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:8356 - "GET /js/utils.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:55121 - "GET /css/style.css HTTP/1.1" 200 OK
+INFO:     223.104.68.130:55003 - "GET /js/tools.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:8249 - "GET /js/chat.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:55119 - "GET /js/main.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:55119 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     223.104.68.130:27059 - "GET /index.html HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:27059 - "GET /css/style.css HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:41430 - "GET /config.js HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:27153 - "GET /js/utils.js HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:27154 - "GET /js/tools.js HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:27059 - "GET /js/chat.js HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:41549 - "GET /js/main.js HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:27158 - "GET /index.html HTTP/1.1" 200 OK
+INFO:     223.104.68.130:27158 - "GET /css/style.css HTTP/1.1" 200 OK
+INFO:     223.104.68.130:60084 - "GET /config.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:60167 - "GET /js/utils.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:13431 - "GET /js/main.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:60166 - "GET /js/chat.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:13432 - "GET /js/tools.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:13432 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     223.104.68.130:13432 - "POST /api/v1/api/v1/contracts/generate HTTP/1.1" 405 Method Not Allowed
+INFO:     223.104.68.130:43412 - "GET /index.html HTTP/1.1" 200 OK
+INFO:     223.104.68.130:43412 - "GET /css/style.css HTTP/1.1" 200 OK
+INFO:     223.104.68.130:43411 - "GET /config.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:29041 - "GET /js/utils.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:43546 - "GET /js/tools.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:29040 - "GET /js/chat.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:29039 - "GET /js/main.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:29040 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     223.104.68.130:12753 - "GET /index.html HTTP/1.1" 200 OK
+INFO:     223.104.68.130:12753 - "GET /css/style.css HTTP/1.1" 200 OK
+INFO:     223.104.68.130:12754 - "GET /config.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:12808 - "GET /js/chat.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:59100 - "GET /js/tools.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:59101 - "GET /js/utils.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:12807 - "GET /js/main.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:12807 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     223.104.68.130:39528 - "GET /index.html HTTP/1.1" 200 OK
+INFO:     223.104.68.130:39528 - "GET /css/style.css HTTP/1.1" 200 OK
+INFO:     223.104.68.130:25403 - "GET /config.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:39580 - "GET /js/tools.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:25458 - "GET /js/main.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:25457 - "GET /js/chat.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:25456 - "GET /js/utils.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:25458 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+=== DEBUG contract_generate ===
+assistant_id: 2043697012260768960
+user_id: b681fd8c-3c11-5b22-8413-8fc485d53594
+api_key: rOMkt42ZLw8JpeV2aJoZB0JR5tBg1dMA
+messages: [{'role': 'user', 'content': [{'type': 'text', 'text': '请根据以下信息起草合同正文，条款应完整、可执行，并说明必要时的留白项。\n合同类型：房屋租赁合同\n当事方：甲方：用户，乙方：AI\n标的/合作内容：生成一份房屋租赁合同'}]}]
+=== 调试结束 ===
+=== REQUEST DEBUG ===
+URL: https://yuanqi.tencent.com/openapi/v1/agent/chat/completions
+Headers: {'Authorization': 'Bearer rOMkt42ZLw8JpeV2aJoZB0JR5tBg1dMA', 'Content-Type': 'application/json', 'X-Source': 'openapi'}
+Payload: {'assistant_id': '2043697012260768960', 'user_id': 'b681fd8c-3c11-5b22-8413-8fc485d53594', 'stream': False, 'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': '请根据以下信息起草合同正文，条款应完整、可执行，并说明必要时的留白项。\n合同类型：房屋租赁合同\n当事方：甲方：用户，乙方：AI\n标的/合作内容：生成一份房屋租赁合同'}]}]}
+===================
+2026-04-18T14:36:32 INFO [httpx] request_id=17bb870c-129b-4574-8b9d-c85fc03b11a6 HTTP Request: POST https://yuanqi.tencent.com/openapi/v1/agent/chat/completions "HTTP/1.1 200 OK"
+INFO:     223.104.68.130:1697 - "POST /api/v1/contracts/generate HTTP/1.1" 200 OK
+=== REQUEST DEBUG ===
+URL: https://yuanqi.tencent.com/openapi/v1/agent/chat/completions
+Headers: {'Authorization': 'Bearer nhShz4iAfg6ykKqlMXm0RMmsIaNAqSQI', 'Content-Type': 'application/json', 'X-Source': 'openapi'}
+Payload: {'assistant_id': '2043524073521047360', 'user_id': 'b681fd8c-3c11-5b22-8413-8fc485d53594', 'stream': False, 'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': '请根据用户问题进行法律条款检索与说明，尽量引用可核对来源；用户问题：\n劳动合同试用期最长多久？'}]}]}
+===================
+2026-04-18T14:38:38 INFO [httpx] request_id=a0707ec3-4db6-4e4d-aca0-cc3c1882f5c2 HTTP Request: POST https://yuanqi.tencent.com/openapi/v1/agent/chat/completions "HTTP/1.1 200 OK"
+INFO:     223.104.68.130:32333 - "POST /api/v1/legal/clauses/search HTTP/1.1" 200 OK
+INFO:     223.104.68.130:13900 - "POST /api/v1/contracts/review HTTP/1.1" 422 Unprocessable Entity
+=== REQUEST DEBUG ===
+URL: https://yuanqi.tencent.com/openapi/v1/agent/chat/completions
+Headers: {'Authorization': 'Bearer iG4AC1QK8WcBCV0BufxOjzZ62tXHLIWM', 'Content-Type': 'application/json', 'X-Source': 'openapi'}
+Payload: {'assistant_id': '2034662157065469824', 'user_id': 'b681fd8c-3c11-5b22-8413-8fc485d53594', 'stream': False, 'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': '劳动合同试用期最长多久？'}]}]}
+===================
+2026-04-18T14:39:05 INFO [httpx] request_id=92996c0d-e08d-4764-bc3e-7da9502f8b65 HTTP Request: POST https://yuanqi.tencent.com/openapi/v1/agent/chat/completions "HTTP/1.1 200 OK"
+INFO:     223.104.68.130:4189 - "POST /api/v1/agent/chat/completions HTTP/1.1" 200 OK
+INFO:     223.104.68.130:19959 - "GET /index.html HTTP/1.1" 200 OK
+INFO:     223.104.68.130:19959 - "GET /css/style.css HTTP/1.1" 200 OK
+INFO:     223.104.68.130:5191 - "GET /config.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:20031 - "GET /js/utils.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:5239 - "GET /js/tools.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:5240 - "GET /js/main.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:20032 - "GET /js/chat.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:20032 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+=== REQUEST DEBUG ===
+URL: https://yuanqi.tencent.com/openapi/v1/agent/chat/completions
+Headers: {'Authorization': 'Bearer nhShz4iAfg6ykKqlMXm0RMmsIaNAqSQI', 'Content-Type': 'application/json', 'X-Source': 'openapi'}
+Payload: {'assistant_id': '2043524073521047360', 'user_id': 'b681fd8c-3c11-5b22-8413-8fc485d53594', 'stream': False, 'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': '请根据用户问题进行法律条款检索与说明，尽量引用可核对来源；用户问题：\n劳动合同试用期最长多久？'}]}]}
+===================
+2026-04-18T14:40:28 INFO [httpx] request_id=3db65977-ff30-45a3-8d52-ebc3d2eb091f HTTP Request: POST https://yuanqi.tencent.com/openapi/v1/agent/chat/completions "HTTP/1.1 200 OK"
+INFO:     223.104.68.130:27865 - "POST /api/v1/legal/clauses/search HTTP/1.1" 200 OK
+INFO:     223.104.68.130:57417 - "GET /index.html HTTP/1.1" 200 OK
+INFO:     223.104.68.130:57416 - "GET /config.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:57417 - "GET /css/style.css HTTP/1.1" 200 OK
+INFO:     223.104.68.130:57584 - "GET /js/tools.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:10112 - "GET /js/chat.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:10115 - "GET /js/utils.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:57590 - "GET /js/main.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:10115 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+=== REQUEST DEBUG ===
+URL: https://yuanqi.tencent.com/openapi/v1/agent/chat/completions
+Headers: {'Authorization': 'Bearer nhShz4iAfg6ykKqlMXm0RMmsIaNAqSQI', 'Content-Type': 'application/json', 'X-Source': 'openapi'}
+Payload: {'assistant_id': '2043524073521047360', 'user_id': 'b681fd8c-3c11-5b22-8413-8fc485d53594', 'stream': False, 'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': '请根据用户问题进行法律条款检索与说明，尽量引用可核对来源；用户问题：\n劳动合同试用期最长多久？'}]}]}
+===================
+2026-04-18T14:42:09 INFO [httpx] request_id=fcba6030-86bb-4533-830f-ba3ce86e2a67 HTTP Request: POST https://yuanqi.tencent.com/openapi/v1/agent/chat/completions "HTTP/1.1 200 OK"
+INFO:     223.104.68.130:62620 - "POST /api/v1/legal/clauses/search HTTP/1.1" 200 OK
+INFO:     223.104.68.130:42259 - "GET /index.html HTTP/1.1" 200 OK
+INFO:     223.104.68.130:42259 - "GET /css/style.css HTTP/1.1" 200 OK
+INFO:     223.104.68.130:42384 - "GET /js/main.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:42383 - "GET /js/tools.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:26223 - "GET /config.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:26222 - "GET /js/chat.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:26221 - "GET /js/utils.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:42383 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+=== REQUEST DEBUG ===
+URL: https://yuanqi.tencent.com/openapi/v1/agent/chat/completions
+Headers: {'Authorization': 'Bearer iG4AC1QK8WcBCV0BufxOjzZ62tXHLIWM', 'Content-Type': 'application/json', 'X-Source': 'openapi'}
+Payload: {'assistant_id': '2034662157065469824', 'user_id': 'b681fd8c-3c11-5b22-8413-8fc485d53594', 'stream': False, 'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': '劳动合同试用期是多久？'}]}]}
+===================
+2026-04-18T14:45:44 INFO [httpx] request_id=cc612a38-8b29-4fb8-9f51-6e26d38832e9 HTTP Request: POST https://yuanqi.tencent.com/openapi/v1/agent/chat/completions "HTTP/1.1 200 OK"
+INFO:     223.104.68.130:51089 - "POST /api/v1/agent/chat/completions HTTP/1.1" 200 OK
+=== REQUEST DEBUG ===
+URL: https://yuanqi.tencent.com/openapi/v1/agent/chat/completions
+Headers: {'Authorization': 'Bearer nhShz4iAfg6ykKqlMXm0RMmsIaNAqSQI', 'Content-Type': 'application/json', 'X-Source': 'openapi'}
+Payload: {'assistant_id': '2043524073521047360', 'user_id': 'b681fd8c-3c11-5b22-8413-8fc485d53594', 'stream': False, 'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': '请根据用户问题进行法律条款检索与说明，尽量引用可核对来源；用户问题：\n劳动合同试用期是多久？'}]}]}
+===================
+2026-04-18T14:46:11 INFO [httpx] request_id=98d10caf-0117-4676-93db-1b44ff9574ae HTTP Request: POST https://yuanqi.tencent.com/openapi/v1/agent/chat/completions "HTTP/1.1 200 OK"
+INFO:     223.104.68.130:11099 - "POST /api/v1/legal/clauses/search HTTP/1.1" 200 OK
+INFO:     59.83.208.108:45668 - "GET /api/v1/contracts/review HTTP/1.1" 404 Not Found
+INFO:     223.104.68.130:31172 - "GET / HTTP/1.1" 200 OK
+INFO:     223.104.68.130:31172 - "GET /css/style.css HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:46810 - "GET /js/utils.js HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:46812 - "GET /config.js HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:31172 - "GET /js/tools.js HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:31172 - "GET /js/main.js HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:46810 - "GET /js/chat.js HTTP/1.1" 304 Not Modified
+INFO:     223.104.68.130:49884 - "GET / HTTP/1.1" 200 OK
+INFO:     223.104.68.130:49884 - "GET /css/style.css HTTP/1.1" 200 OK
+INFO:     223.104.68.130:34316 - "GET /config.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:34407 - "GET /js/utils.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:49968 - "GET /js/chat.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:34408 - "GET /js/tools.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:49969 - "GET /js/main.js HTTP/1.1" 200 OK
+INFO:     223.104.68.130:49969 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+=== DEBUG contract_generate ===
+assistant_id: 2043697012260768960
+user_id: b681fd8c-3c11-5b22-8413-8fc485d53594
+api_key: rOMkt42ZLw8JpeV2aJoZB0JR5tBg1dMA
+messages: [{'role': 'user', 'content': [{'type': 'text', 'text': '请根据以下信息起草合同正文，条款应完整、可执行，并说明必要时的留白项。\n合同类型：房屋租赁合同\n当事方：甲方：用户，乙方：AI\n标的/合作内容：帮我生成一份劳动合同'}]}]
+=== 调试结束 ===
+=== REQUEST DEBUG ===
+URL: https://yuanqi.tencent.com/openapi/v1/agent/chat/completions
+Headers: {'Authorization': 'Bearer rOMkt42ZLw8JpeV2aJoZB0JR5tBg1dMA', 'Content-Type': 'application/json', 'X-Source': 'openapi'}
+Payload: {'assistant_id': '2043697012260768960', 'user_id': 'b681fd8c-3c11-5b22-8413-8fc485d53594', 'stream': False, 'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': '请根据以下信息起草合同正文，条款应完整、可执行，并说明必要时的留白项。\n合同类型：房屋租赁合同\n当事方：甲方：用户，乙方：AI\n标的/合作内容：帮我生成一份劳动合同'}]}]}
+===================
+2026-04-18T14:52:21 INFO [httpx] request_id=9bc2e451-2985-48c3-a6ab-68c6a605e230 HTTP Request: POST https://yuanqi.tencent.com/openapi/v1/agent/chat/completions "HTTP/1.1 200 OK"
+INFO:     223.104.68.130:21765 - "POST /api/v1/contracts/generate HTTP/1.1" 200 OK
+INFO:     180.101.244.14:59974 - "GET /api/v1/contracts/generate HTTP/1.1" 404 Not Found
+=== REQUEST DEBUG ===
+URL: https://yuanqi.tencent.com/openapi/v1/agent/chat/completions
+Headers: {'Authorization': 'Bearer nhShz4iAfg6ykKqlMXm0RMmsIaNAqSQI', 'Content-Type': 'application/json', 'X-Source': 'openapi'}
+Payload: {'assistant_id': '2043524073521047360', 'user_id': 'b681fd8c-3c11-5b22-8413-8fc485d53594', 'stream': False, 'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': '请根据用户问题进行法律条款检索与说明，尽量引用可核对来源；用户问题：\n我想查一下最新修订的《民法典》中关于夫妻共同债务的具体规定，能帮我快速定位相关条款吗？'}]}]}
+===================
+2026-04-18T15:03:32 INFO [httpx] request_id=ec8c4765-2b48-4f98-bb3f-1ba9db8a0568 HTTP Request: POST https://yuanqi.tencent.com/openapi/v1/agent/chat/completions "HTTP/1.1 200 OK"
+INFO:     223.104.68.130:22475 - "POST /api/v1/legal/clauses/search HTTP/1.1" 200 OK
+=== REQUEST DEBUG ===
+URL: https://yuanqi.tencent.com/openapi/v1/agent/chat/completions
+Headers: {'Authorization': 'Bearer nhShz4iAfg6ykKqlMXm0RMmsIaNAqSQI', 'Content-Type': 'application/json', 'X-Source': 'openapi'}
+Payload: {'assistant_id': '2043524073521047360', 'user_id': 'b681fd8c-3c11-5b22-8413-8fc485d53594', 'stream': False, 'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': '请根据用户问题进行法律条款检索与说明，尽量引用可核对来源；用户问题：\n我想查一下最新修订的《民法典》中关于夫妻共同债务的具体规定，能帮我快速定位相关条款吗？'}]}]}
+===================
+2026-04-18T15:05:19 INFO [httpx] request_id=b569e03d-fe95-4823-b8c8-687a996580c5 HTTP Request: POST https://yuanqi.tencent.com/openapi/v1/agent/chat/completions "HTTP/1.1 200 OK"
+INFO:     223.104.68.130:18693 - "POST /api/v1/legal/clauses/search HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     204.76.203.51:14276 - "GET /e?n=37ce5cd6dab79d94cbe6 HTTP/1.1" 404 Not Found
+INFO:     167.94.146.51:31050 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     167.94.146.51:31072 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     167.94.146.51:31086 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     167.94.146.51:23850 - "GET /robots.txt HTTP/1.1" 404 Not Found
+INFO:     210.39.1.122:11933 - "GET / HTTP/1.1" 304 Not Modified
+INFO:     210.39.1.122:11933 - "GET /css/style.css HTTP/1.1" 304 Not Modified
+INFO:     210.39.1.122:11934 - "GET /config.js HTTP/1.1" 304 Not Modified
+INFO:     210.39.1.122:11933 - "GET /js/utils.js HTTP/1.1" 304 Not Modified
+INFO:     210.39.1.122:11935 - "GET /js/tools.js HTTP/1.1" 304 Not Modified
+INFO:     210.39.1.122:11934 - "GET /js/main.js HTTP/1.1" 304 Not Modified
+INFO:     210.39.1.122:11933 - "GET /js/chat.js HTTP/1.1" 304 Not Modified
+INFO:     210.39.1.122:11933 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     220.196.160.96:48696 - "GET / HTTP/1.1" 200 OK
+INFO:     159.75.198.113:15668 - "GET /config.js HTTP/1.1" 200 OK
+INFO:     159.75.198.113:15668 - "GET /js/utils.js HTTP/1.1" 200 OK
+INFO:     180.101.244.16:30400 - "GET / HTTP/1.1" 200 OK
+INFO:     180.101.244.16:30400 - "GET /css/style.css HTTP/1.1" 200 OK
+INFO:     180.101.244.16:30418 - "GET /js/utils.js HTTP/1.1" 200 OK
+INFO:     180.101.244.16:30416 - "GET /js/tools.js HTTP/1.1" 200 OK
+INFO:     180.101.244.16:30414 - "GET /config.js HTTP/1.1" 200 OK
+INFO:     180.101.244.16:30420 - "GET /js/chat.js HTTP/1.1" 200 OK
+INFO:     180.101.244.16:30422 - "GET /js/main.js HTTP/1.1" 200 OK
+INFO:     180.101.244.16:30420 - "GET /login.html HTTP/1.1" 200 OK
+INFO:     180.163.29.79:39466 - "GET /docs HTTP/1.1" 200 OK
+INFO:     210.39.1.122:11938 - "GET / HTTP/1.1" 304 Not Modified
+INFO:     210.39.1.122:11938 - "GET /css/style.css HTTP/1.1" 304 Not Modified
+INFO:     210.39.1.122:11939 - "GET /config.js HTTP/1.1" 304 Not Modified
+INFO:     210.39.1.122:11938 - "GET /js/utils.js HTTP/1.1" 304 Not Modified
+INFO:     210.39.1.122:11939 - "GET /js/tools.js HTTP/1.1" 304 Not Modified
+INFO:     210.39.1.122:11940 - "GET /js/chat.js HTTP/1.1" 304 Not Modified
+INFO:     210.39.1.122:11938 - "GET /js/main.js HTTP/1.1" 304 Not Modified
+INFO:     210.39.1.122:11940 - "GET /docs HTTP/1.1" 200 OK
+INFO:     210.39.1.122:11940 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     180.101.244.12:29986 - "GET /docs HTTP/1.1" 200 OK
+INFO:     129.211.166.134:29070 - "GET /docs HTTP/1.1" 200 OK
+INFO:     129.211.166.123:6604 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     210.39.1.122:11942 - "GET /docs HTTP/1.1" 200 OK
+INFO:     210.39.1.122:11942 - "GET /openapi.json HTTP/1.1" 200 OK
+=== REQUEST DEBUG ===
+URL: https://yuanqi.tencent.com/openapi/v1/agent/chat/completions
+Headers: {'Authorization': 'Bearer nhShz4iAfg6ykKqlMXm0RMmsIaNAqSQI', 'Content-Type': 'application/json', 'X-Source': 'openapi'}
+Payload: {'assistant_id': '2043524073521047360', 'user_id': 'b681fd8c-3c11-5b22-8413-8fc485d53594', 'stream': False, 'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': '请根据用户问题进行法律条款检索与说明，尽量引用可核对来源；用户问题：\n劳动合同生成'}]}]}
+===================
+2026-04-18T16:01:05 INFO [httpx] request_id=65cbbee1-f170-4704-9cde-bebedc80e41e HTTP Request: POST https://yuanqi.tencent.com/openapi/v1/agent/chat/completions "HTTP/1.1 200 OK"
+INFO:     210.39.1.122:11943 - "POST /api/v1/legal/clauses/search HTTP/1.1" 200 OK
+INFO:     210.39.1.122:11944 - "GET / HTTP/1.1" 304 Not Modified
+INFO:     210.39.1.122:11944 - "GET /config.js HTTP/1.1" 200 OK
+INFO:     210.39.1.122:11945 - "GET /js/utils.js HTTP/1.1" 304 Not Modified
+INFO:     210.39.1.122:11947 - "GET /js/chat.js HTTP/1.1" 304 Not Modified
+INFO:     210.39.1.122:11946 - "GET /js/tools.js HTTP/1.1" 304 Not Modified
+INFO:     210.39.1.122:11948 - "GET /js/main.js HTTP/1.1" 304 Not Modified
+INFO:     210.39.1.122:11949 - "GET / HTTP/1.1" 304 Not Modified
+INFO:     180.101.244.14:17816 - "GET /api/v1/legal/clauses/search HTTP/1.1" 404 Not Found
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-04-18T16:06:06 INFO [app.main] request_id=- 应用关闭
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2744]

@@ -32,7 +32,7 @@ def plain_text_from_message(msg: ChatMessageSchema) -> str:
 
 
 def tool_badge_from_session_tool_type(tool_type: str) -> str | None:
-    if tool_type in ("law", "case", "contract", "review"):
+    if tool_type in ("law", "case", "contract", "review", "chat"): # 添加 "chat"
         return tool_type
     return None
 
@@ -80,6 +80,20 @@ def merge_for_yuanqi(
     return merged[-YUANQI_MAX_MESSAGES:]
 
 
+async def update_session_title_if_default(
+    db: AsyncSession,
+    session_row: ChatSession,
+    first_message: str | None,
+) -> None:
+    """如果会话标题是默认值，则根据第一条消息更新标题。"""
+    if session_row.title == DEFAULT_TITLE and first_message:
+        raw = first_message.strip()
+        if len(raw) > TITLE_MAX_LEN:
+            session_row.title = raw[:TITLE_MAX_LEN] + "…"
+        else:
+            session_row.title = raw or DEFAULT_TITLE
+    await db.flush() # 确保标题更新被持久化
+
 async def persist_turn(
     db: AsyncSession,
     *,
@@ -95,12 +109,7 @@ async def persist_turn(
                 first_user = t
                 break
 
-    if session_row.title == DEFAULT_TITLE and first_user:
-        raw = first_user.strip()
-        if len(raw) > TITLE_MAX_LEN:
-            session_row.title = raw[:TITLE_MAX_LEN] + "…"
-        else:
-            session_row.title = raw or DEFAULT_TITLE
+    await update_session_title_if_default(db, session_row, first_user)
 
     badge = tool_badge_from_session_tool_type(session_row.tool_type)
 
@@ -114,7 +123,7 @@ async def persist_turn(
                 session_id=session_row.id,
                 role="user",
                 content=text,
-                tool_badge=None,
+                tool_badge=badge, # 使用 badge 变量
             )
         )
 

@@ -111,6 +111,7 @@ class ClauseSearchRequest(BaseModel):
     query: str = Field(..., min_length=1, max_length=8000)
     filters: str | None = Field(None, description="可选检索范围/标签，如与元器 custom_variables 对齐")
     user_id: str | None = None
+    session_id: str | None = None
     custom_variables: dict[str, str] | None = None
 
 
@@ -129,3 +130,8 @@ class ContractReviewResultResponse(BaseModel):
     status: str = Field(..., description="pending / done / failed")
     result: str | None = None
     error: str | None = None
+
+class ChatMessageCreate(BaseModel):
+    role: str = Field(..., description="user 或 assistant", pattern="^(user|assistant)$")
+    content: str = Field(..., max_length=10000, description="消息内容")
+    tool_badge: str | None = Field(None, max_length=16, description="工具标识：law/contract/review/chat")

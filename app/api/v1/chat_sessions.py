@@ -94,6 +94,7 @@ async def create_chat_session(
     )
     db.add(row)
     await db.flush()
+    await db.refresh(row)  # 添加这一行，刷新对象获取默认值
     return ChatSessionItem(
         id=row.id,
         user_id=row.user_id,
@@ -261,3 +262,50 @@ async def list_chat_messages(
         for m in rows
     ]
     return PaginatedChatMessages(total=total, items=items)
+
+
+from app.schemas.common import ChatMessageCreate
+
+@router.post("/{session_id}/messages", dependencies=[Depends(require_service_auth)])
+async def add_chat_message(
+    session_id: str,
+    body: ChatMessageCreate,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    settings: Annotated[Settings, Depends(get_settings)],
+    authorization: Annotated[str | None, Header()] = None,
+) -> ChatMessageItem:
+    uid = resolve_user_id(settings, authorization, None)
+    user = await get_or_create_user(db, uid, settings)
+    
+    # 验证会话是否存在且属于当前用户
+    r = await db.execute(
+        select(ChatSession).where(
+            ChatSession.id == session_id,
+            ChatSession.user_id == user.id,
+        )
+    )
+    session = r.scalar_one_or_none()
+    if not session:
+        raise AppError("session_not_found", "会话不存在或无权访问", status_code=404)
+    
+    # 创建消息
+    message_id = str(uuid.uuid4())
+    message = ChatMessageRow(
+        id=message_id,
+        session_id=session_id,
+        role=body.role,
+        content=body.content,
+        tool_badge=body.tool_badge,
+    )
+    db.add(message)
+    await db.flush()
+    await db.refresh(message)  # 添加这一行，刷新获取默认值
+    
+    return ChatMessageItem(
+        id=message.id,
+        session_id=message.session_id,
+        role=message.role,
+        content=message.content,
+        tool_badge=message.tool_badge,
+        created_at=message.created_at,
+    )

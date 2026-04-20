@@ -1,6 +1,7 @@
 import uuid
 from typing import Annotated
-
+import docx
+from io import BytesIO
 from fastapi import APIRouter, Depends, File, Form, Header, UploadFile
 from fastapi.responses import StreamingResponse
 from sqlalchemy import select
@@ -22,7 +23,7 @@ from app.schemas.common import (
 from app.services.conversation import build_user_message, to_yuanqi_messages
 from app.services.users import get_or_create_user
 from app.services.yuanqi_client import YuanqiClient, extract_assistant_text
-
+from app.services.chat_history import update_session_title_if_default # 导入新的函数
 router = APIRouter(prefix="/contracts", tags=["contracts"])
 
 MAX_INLINE_TEXT_CHARS = 200_000
@@ -143,16 +144,49 @@ async def contract_review(
     user_id_body: str | None = Form(None, alias="user_id"),
     session_id: str | None = Form(None),
 ) -> ContractReviewResultResponse:
+    from app.db.models.chat_message import ChatMessage as ChatMessageRow
+    
     uid = resolve_user_id(settings, authorization, user_id_body)
     user = await get_or_create_user(session, uid, settings)
-    await _ensure_session_owned(session, user.id, session_id)
+    
+    # 自动创建会话（如果没有传入 session_id）
+    actual_session_id = session_id
+    session_row = None # 用于传递给 update_session_title_if_default
+    if not actual_session_id:
+        actual_session_id = str(uuid.uuid4())
+        title = file.filename or "合同审查"
+        new_session = ChatSession(
+            id=actual_session_id,
+            user_id=user.id,
+            title=title[:50] if title else "合同审查",
+            tool_type="review",
+        )
+        session.add(new_session)
+        await session.flush()
+        session_row = new_session
+        print(f"自动创建审查会话: {actual_session_id}")
+    else:
+        session_row = await _ensure_session_owned(session, user.id, actual_session_id) # 获取现有会话
+    
+    # await _ensure_session_owned(session, user.id, actual_session_id) # 这一行不再需要，因为上面已经获取或创建了 session_row
 
     raw = await _read_limited_upload(file, settings.max_upload_bytes)
-    contract_text = raw.decode("utf-8", errors="replace")
+    
+    # 根据文件类型提取文本内容
+    if file.filename and file.filename.lower().endswith('.docx'):
+        try:
+            doc = docx.Document(BytesIO(raw))
+            contract_text = '\n'.join([p.text for p in doc.paragraphs])
+        except Exception as e:
+            contract_text = raw.decode("utf-8", errors="replace")
+    else:
+        contract_text = raw.decode("utf-8", errors="replace")
+    
     if len(contract_text) > MAX_INLINE_TEXT_CHARS:
         contract_text = contract_text[:MAX_INLINE_TEXT_CHARS] + "\n\n[文本已截断]"
 
     assistant_id = settings.assistant_id_for("contract_review")
+    api_key = settings.yuanqi_api_key_for("contract_review")
     cid = str(uuid.uuid4())
     title = file.filename or "合同审查"
     ft = _file_type_from_name(file.filename)
@@ -160,7 +194,7 @@ async def contract_review(
     contract = Contract(
         id=cid,
         user_id=user.id,
-        session_id=session_id,
+        session_id=actual_session_id,
         title=title,
         contract_type=None,
         scene="review",
@@ -180,6 +214,24 @@ async def contract_review(
     await session.flush()
     await session.commit()
 
+    # ===== 保存用户消息到聊天记录 =====
+    user_message_content = notes or f"上传合同文件：{file.filename}"
+    user_msg = ChatMessageRow(
+        id=str(uuid.uuid4()),
+        session_id=actual_session_id,
+        role="user",
+        content=user_message_content,
+        tool_badge="review",
+    )
+    session.add(user_msg)
+    await session.flush()
+    # ================================
+
+    # 更新会话标题（如果需要）
+    if session_row:
+        await update_session_title_if_default(session, session_row, user_message_content)
+        await session.flush() # 确保标题更新被持久化
+
     prompt_parts = [
         "你是一名法律顾问，请对下列合同文本进行风险审查，列出风险点、建议修改方向及依据（如有）。",
     ]
@@ -197,9 +249,22 @@ async def contract_review(
             messages=messages,
             stream=False,
             custom_variables=None,
+            api_key=api_key, 
         )
         text = extract_assistant_text(data)
         contract.review_result = text
+        
+        # ===== 保存 AI 回复到聊天记录 =====
+        assistant_msg = ChatMessageRow(
+            id=str(uuid.uuid4()),
+            session_id=actual_session_id,
+            role="assistant",
+            content=text,
+            tool_badge="review",
+        )
+        session.add(assistant_msg)
+        # ================================
+        
     except AppError as e:
         contract.review_result = f"{REVIEW_FAILED_PREFIX}{e.message}"
         await session.commit()
@@ -217,7 +282,7 @@ async def contract_review(
     await session.commit()
     st = _review_status(contract)
     err = None
-    res = contract.review_result
+    res = contract.review_result    
     if st == "failed" and res:
         err = res.removeprefix(REVIEW_FAILED_PREFIX).strip()
         res = None
@@ -227,6 +292,7 @@ async def contract_review(
         result=res,
         error=err,
     )
+
 
 
 @router.get(
@@ -280,7 +346,27 @@ async def contract_generate(
 ) -> ChatCompletionResponse:
     user_id = resolve_user_id(settings, authorization, body.user_id)
     user = await get_or_create_user(session, user_id, settings)
-    await _ensure_session_owned(session, user.id, body.session_id)
+    
+    # 自动创建会话（如果没有传入 session_id）
+    actual_session_id = body.session_id
+    session_row = None # 用于传递给 update_session_title_if_default
+    if not actual_session_id:
+        actual_session_id = str(uuid.uuid4())
+        title = body.contract_type or "合同生成"
+        new_session = ChatSession(
+            id=actual_session_id,
+            user_id=user.id,
+            title=title[:50] if title else "合同生成",
+            tool_type="contract",
+        )
+        session.add(new_session)
+        await session.flush()
+        session_row = new_session
+        print(f"自动创建合同生成会话: {actual_session_id}")
+    else:
+        session_row = await _ensure_session_owned(session, user.id, actual_session_id) # 获取现有会话
+    
+    # await _ensure_session_owned(session, user.id, actual_session_id) # 这一行不再需要
 
     assistant_id = settings.assistant_id_for("contract_generate")
     lines = [
@@ -295,13 +381,32 @@ async def contract_generate(
         lines.append(f"其他要求：{body.extra_requirements}")
     prompt = "\n".join(lines)
     messages = build_user_message(prompt)
-   # 插入调试代码
+    
+    # ===== 保存用户消息到聊天记录 =====
+    user_message_content = prompt # 使用完整的 prompt 作为用户消息内容
+    user_msg = ChatMessageRow(
+        id=str(uuid.uuid4()),
+        session_id=actual_session_id,
+        role="user",
+        content=user_message_content,
+        tool_badge="contract",
+    )
+    session.add(user_msg)
+    await session.flush()
+    # ================================
+
+    # 更新会话标题（如果需要）
+    if session_row:
+        await update_session_title_if_default(session, session_row, user_message_content)
+        await session.flush() # 确保标题更新被持久化
+
     print(f"=== DEBUG contract_generate ===")
     print(f"assistant_id: {assistant_id}")
     print(f"user_id: {user_id}")
-    print(f"api_key: {settings.yuanqi_api_key_for('contract_generate')}")  # 新增
+    print(f"api_key: {settings.yuanqi_api_key_for('contract_generate')}")
     print(f"messages: {messages}")
     print(f"=== 调试结束 ===")
+    
     data = await client.chat_completions(
         assistant_id=assistant_id,
         user_id=user_id,
@@ -315,13 +420,25 @@ async def contract_generate(
     contract = Contract(
         id=cid,
         user_id=user.id,
-        session_id=body.session_id,
+        session_id=actual_session_id,
         title=f"{body.contract_type}",
         contract_type=body.contract_type,
         scene="generate",
         content=text,
     )
     session.add(contract)
+    
+    # ===== 保存 AI 回复到聊天记录 =====
+    assistant_msg = ChatMessageRow(
+        id=str(uuid.uuid4()),
+        session_id=actual_session_id,
+        role="assistant",
+        content=text,
+        tool_badge="contract",
+    )
+    session.add(assistant_msg)
+    # ================================
+
     await session.commit()
 
     return ChatCompletionResponse(

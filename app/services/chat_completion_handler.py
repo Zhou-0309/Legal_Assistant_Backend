@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import uuid
 from typing import Any
 
 from fastapi.responses import StreamingResponse
@@ -16,6 +17,8 @@ from app.services.conversation import to_yuanqi_messages
 from app.services.sse_text_accumulator import SSEAssistantTextAccumulator
 from app.services.users import get_or_create_user
 from app.services.yuanqi_client import YuanqiClient, extract_assistant_text
+from app.db.models.chat_session import ChatSession
+from sqlalchemy import select, func
 
 
 def _validate_session_new_messages(body: ChatCompletionRequest) -> None:
@@ -28,6 +31,36 @@ def _validate_session_new_messages(body: ChatCompletionRequest) -> None:
             )
 
 
+async def _create_session_if_needed(
+    db: AsyncSession,
+    user_id: str,
+    session_id: str | None,
+    tool_type: str,
+    first_message: str,
+) -> tuple[str, Any]:
+    """如果没有 session_id，自动创建会话"""
+    actual_session_id = session_id
+    session_row = None
+    
+    if not actual_session_id:
+        actual_session_id = str(uuid.uuid4())
+        title = first_message[:50] if first_message else "新对话"
+        new_session = ChatSession(
+            id=actual_session_id,
+            user_id=user_id,
+            title=title,
+            tool_type=tool_type,
+        )
+        db.add(new_session)
+        await db.flush()
+        session_row = new_session
+    else:
+        # 获取现有会话
+        session_row = await chat_history.get_chat_session_owned(db, user_id, actual_session_id)
+    
+    return actual_session_id, session_row
+
+
 async def handle_yuanqi_chat_completion(
     *,
     body: ChatCompletionRequest,
@@ -37,18 +70,22 @@ async def handle_yuanqi_chat_completion(
     authorization: str | None,
 ) -> ChatCompletionResponse | StreamingResponse:
     user_id = resolve_user_id(settings, authorization, body.user_id)
+    user = await get_or_create_user(db, user_id, settings)
     assistant_id = settings.assistant_id_for("chat")
 
-    session_row: Any = None
+    # 获取第一条消息内容用于标题
+    first_message = body.messages[0].content if body.messages else "新对话"
+    
+    # 自动创建会话（如果没有 session_id）
+    actual_session_id, session_row = await _create_session_if_needed(
+        db, user.id, body.session_id, "chat", first_message
+    )
+
     yuanqi_messages: list[dict[str, Any]]
 
     if body.session_id:
-        user = await get_or_create_user(db, user_id, settings)
         _validate_session_new_messages(body)
-        session_row = await chat_history.get_chat_session_owned(
-            db, user.id, body.session_id
-        )
-        existing = await chat_history.load_messages_as_schemas(db, body.session_id)
+        existing = await chat_history.load_messages_as_schemas(db, actual_session_id)
         merged = chat_history.merge_for_yuanqi(existing, body.messages)
         try:
             yuanqi_messages = to_yuanqi_messages(merged)
